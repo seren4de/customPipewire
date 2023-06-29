@@ -1,22 +1,32 @@
 #!/bin/bash
 
+# Get the directory path of the script
+script_dir="$(dirname "$(readlink -f "$0")")"
+
 # Define log function
 log() {
-    echo "$(date) - $1" >> $HOME/pipewire_server.log
+    echo "$(date) - $1" >> "$script_dir/pipewire_server.log"
+}
+
+# Define function to add timestamp to command output and write to log file
+log_output() {
+    while read -r line; do
+        echo "$(date) - $line" >> "$script_dir/pipewire_server.log"
+    done
 }
 
 # update to remote repo
-cd $HOME/pipewire/ && git pull
+cd $HOME/pipewire/ && git pull | log_output
 
-if [ $? -ne 0 ]; then
+if [ ${PIPESTATUS[0]} -ne 0 ]; then
     log "Failed to update remote repo"
     exit 1
 fi
 
 # rebuild with ninja incase there are any changes
-cd $HOME/pipewire/builddir/ && ninja
+cd $HOME/pipewire/builddir/ && ninja | log_output
 
-if [ $? -ne 0 ]; then
+if [ ${PIPESTATUS[1]} -ne 0 ]; then
     log "Failed to rebuild with ninja"
     exit 1
 fi
@@ -34,12 +44,10 @@ if [ $? -ne 0 ]; then
 fi
 
 # Change directory to the build directory and set the PIPEWIRE_DEBUG environment variable and run make
-cd $HOME/pipewire/builddir/ && PIPEWIRE_DEBUG="D" make run
+cd $HOME/pipewire/builddir/ && log "Running pipewire server" && PIPEWIRE_DEBUG="D" make run >> $script_dir/pipewire_server.log 2>&1 
 
 if [ $? -ne 0 ]; then
     log "Failed to run make"
     exit 1
 fi
 
-#log success
-log "Running pipewire_server.sh successfully"
