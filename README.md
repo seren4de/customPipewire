@@ -16,18 +16,16 @@ To set up the script to run automatically after login, you can either add it to 
 ## Usage
 
 1. Clone this repository to your home directory.
-
 2. Make sure the script is executable by running the following command:
 
-    ```bash
-    chmod +x $HOME/customPipewire/pipewire_server.sh
-    ```
-
+   ```bash
+   chmod +x $HOME/customPipewire/pipewire_server.sh
+   ```
 3. To run the script manually, use the following command:
 
-    ```bash
-    bash $HOME/customPipewire/pipewire_server.sh
-    ```
+   ```bash
+   bash $HOME/customPipewire/pipewire_server.sh
+   ```
 
 The script will now run automatically at startup. You can check the log file at `$HOME/pipewire_server.log` to see if the script ran successfully.
 
@@ -35,24 +33,22 @@ The script will now run automatically at startup. You can check the log file at 
 
 - To run the script at login, you can add it to your `.bashrc` file by running the following command:
 
-    ```bash
-    echo "bash $HOME/customPipewire/pipewire_server.sh" >> $HOME/.bashrc
-    ```
-
+  ```bash
+  echo "bash $HOME/customPipewire/pipewire_server.sh" >> $HOME/.bashrc
+  ```
 - Alternatively, you can create a desktop entry file in the `~/.config/autostart/` directory to run the script when you log in to your desktop environment. To do this, create a new file named `pipewire_server.desktop` in the `~/.config/autostart/` directory with the following contents:
 
-    ```ini
-    [Desktop Entry]
-    Type=Application
-    Exec=bash $HOME/customPipewire/pipewire_server.sh
-    Hidden=false
-    NoDisplay=false
-    X-GNOME-Autostart-enabled=true
-    Name[en_US]=pipewire_server
-    Name=pipewire_server
-    Comment[en_US]=Run pipewire_server.sh script after login
-    Comment=Run pipewire_server.sh script after login
-    ```
-
+  ```ini
+  [Desktop Entry]
+  Type=Application
+  Exec=bash PATH/TO/customPipewire/pipewire_server.sh
+  Hidden=false
+  NoDisplay=false
+  X-GNOME-Autostart-enabled=true
+  Name[en_US]=pipewire_server
+  Name=pipewire_server
+  Comment[en_US]=Run pipewire_server.sh script after login
+  Comment=Run pipewire_server.sh script after login
+  ```
 - **Note:** Do not add the script to your `.profile` file as it could break the shell `DISPLAY` variable.
-
+- Replace `PATH/TO/customPipewire/pipewire_server.sh` with the literal path to the script in desktop entry.
