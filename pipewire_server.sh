@@ -1,5 +1,29 @@
 #!/bin/bash
 
+# Define the log file path
+log_file="$script_dir/pipewire_server.log"
+
+# Check if the log file exists
+if [ -f "$log_file" ]; then
+    # Delete the log file
+    rm "$log_file"
+
+    # Check if the log file was successfully deleted
+    if [ $? -ne 0 ]; then
+        echo "Failed to delete $log_file"
+        exit 1
+    fi
+fi
+
+# Create a new log file
+touch "$log_file"
+
+# Check if the log file was successfully created
+if [ $? -ne 0 ]; then
+    echo "Failed to create $log_file"
+    exit 1
+fi
+
 # Get the directory path of the script
 script_dir="$(dirname "$(readlink -f "$0")")"
 
