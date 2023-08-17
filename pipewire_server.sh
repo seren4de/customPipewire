@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Get the directory path of the script
+script_dir="$(dirname "$(readlink -f "$0")")"
+
 # Define the log file path
 log_file="$script_dir/pipewire_server.log"
 
@@ -23,9 +26,6 @@ if [ $? -ne 0 ]; then
     echo "Failed to create $log_file"
     exit 1
 fi
-
-# Get the directory path of the script
-script_dir="$(dirname "$(readlink -f "$0")")"
 
 # Define log function
 log() {
