@@ -39,19 +39,39 @@ log_output() {
     done
 }
 
+# Find the pipewire git repository anywhere in the home directory
+pipath=$(find ~/ -type d -name pipewire -exec test -e '{}/.git' ';' -print | head -1)
+
+echo $pipath
 # update to remote repo
-cd $HOME/pipewire/ && git pull | log_output
+cd $pipath && git pull | log_output
 
 if [ ${PIPESTATUS[0]} -ne 0 ]; then
-    log "Failed to update remote repo"
+    log "[-] pulling remote failed"
     exit 1
 fi
 
-# rebuild with ninja incase there are any changes
-cd $HOME/pipewire/builddir/ && ninja | log_output
+# clean before build
+ninja -C builddir clean | log_output
 
 if [ ${PIPESTATUS[1]} -ne 0 ]; then
-    log "Failed to rebuild with ninja"
+    log "[-] clean with ninja failed"
+    exit 1
+fi
+
+# rebuild with meson incase there are any changes
+cd $pipath && meson setup builddir | log_output
+
+if [ ${PIPESTATUS[1]} -ne 0 ]; then
+    log "[-] rebuild with meson failed"
+    exit 1
+fi
+
+# invoke the build
+cd $pipath && meson compile -C builddir | log_output
+
+if [ ${PIPESTATUS[1]} -ne 0 ]; then
+    log "[-] compilation with meson failed"
     exit 1
 fi
 
@@ -63,15 +83,15 @@ systemctl --user stop pipewire.service \
                       pipewire-pulse.socket
 
 if [ $? -ne 0 ]; then
-    log "Failed to stop pipewire services"
+    log "[-] failed to stop pipewire services"
     exit 1
 fi
 
 # Change directory to the build directory and set the PIPEWIRE_DEBUG environment variable and run make
-cd $HOME/pipewire/builddir/ && log "Running pipewire server" && PIPEWIRE_DEBUG="D" make run >> $script_dir/pipewire_server.log 2>&1 
+cd $pipath/builddir/ && log "Running pipewire server" && PIPEWIRE_DEBUG="D" make run >> $script_dir/pipewire_server.log 2>&1 
 
 if [ $? -ne 0 ]; then
-    log "Failed to run make"
+    log "[-] failed to make"
     exit 1
 fi
 
