@@ -27,7 +27,7 @@ git clone https://github.com/seren4de/customPipewire.git && cd customPipewire &&
     Name[en_US]=pipewire_server
     Name=pipewire_server
     Comment[en_US]=Run pipewire_server.sh script after login
-    Comment=Run pipewire_server.sh script after logi" > ~/.config/autostart/pipewire_server.desktop 
+    Comment=Run pipewire_server.sh script after login" > ~/.config/autostart/pipewire_server.desktop 
 ```
 manual steps:
 1. Clone this repository.
